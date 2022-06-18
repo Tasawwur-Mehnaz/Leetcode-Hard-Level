@@ -1,0 +1,47 @@
+Design a special dictionary with some words that searchs the words in it by a prefix and a suffix.
+Implement the WordFilter class:
+
+WordFilter(string[] words) Initializes the object with the words in the dictionary.
+f(string prefix, string suffix) Returns the index of the word in the dictionary, which has the prefix prefix and the suffix suffix. If there is more than one valid index, return the largest of them. If there is no such word in the dictionary, return -1.
+ 
+
+Example 1:
+Input
+["WordFilter", "f"]
+[[["apple"]], ["a", "e"]]
+Output
+[null, 0]
+
+Explanation
+WordFilter wordFilter = new WordFilter(["apple"]);
+wordFilter.f("a", "e"); // return 0, because the word at index 0 has prefix = "a" and suffix = 'e".
+
+Solution:
+without using trie: (using unordered map)
+
+class WordFilter {
+public:
+    unordered_map<string,int> m;
+    WordFilter(vector<string>& words) {
+        for(int i=0;i<words.size();i++)
+        {
+            string w=words[i];
+            int wsize=w.length();
+            
+            for(int j=1;j<=wsize;j++)
+            {
+                string p=w.substr(0,j); //prefix
+                for(int k=0;k<wsize;k++)
+                {
+                    string s=w.substr(k, wsize);  // suffix
+                    m[p+ " " +s]=i+1;   // " " is separator between prefix and suffix string
+                    // adding 1 to handle the 0 case as the map is initialized with 0 by default
+                }
+            }
+        }
+    }
+    
+    int f(string prefix, string suffix) {
+        return m[prefix + " " + suffix]-1; // subtracting 1 as we have added 1 earlier
+    }
+};
