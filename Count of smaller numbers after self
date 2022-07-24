@@ -1,0 +1,91 @@
+You are given an integer array nums and you have to return a new counts array. 
+The counts array has the property where counts[i] is the number of smaller elements to the right of nums[i].
+
+Example 1:
+Input: nums = [5,2,6,1]
+Output: [2,1,1,0]
+Explanation:
+To the right of 5 there are 2 smaller elements (2 and 1).
+To the right of 2 there is only 1 smaller element (1).
+To the right of 6 there is 1 smaller element (1).
+To the right of 1 there is 0 smaller element.
+
+Solution:
+
+class Solution {
+public:
+    int tnums[100001],tind[100001];
+    void merge(int left,int mid,int right,vector<int>& index,vector<int>& nums,vector<int>& ans)
+    {
+        int i=left;
+        int j=mid;
+        int k=i;
+        
+        while((i<mid) && (j<=right))
+        {
+            if(nums[i]<=nums[j])
+            {
+                tnums[k]=nums[i];
+                tind[k]=index[i];
+                ans[index[i]]+=j-mid;
+                i++;
+            }
+            else
+            {
+                tnums[k]=nums[j];
+                tind[k]=index[j];
+                j++;
+            }
+            k++;
+            
+        }
+        while(i<mid)
+        {
+             tnums[k]=nums[i];
+             tind[k]=index[i];
+            ans[index[i]]+=j-mid;
+            i++;
+            k++;
+        }
+        
+        while(j<=right)
+        {
+           tnums[k]=nums[j];
+           tind[k]=index[j];
+           j++;
+            k++;
+        }
+        for(int i=left;i<=right;i++)
+        {
+            index[i]=tind[i];
+            nums[i]=tnums[i];
+        }
+       return; 
+        
+    }
+    
+    void mergesort(int left,int right,vector<int>& index,vector<int>& nums,vector<int>& ans)
+    {
+        if(left==right)
+            return;
+        int mid=(left+right)/2;
+        mergesort(left,mid,index,nums,ans);
+        mergesort(mid+1,right,index,nums,ans);
+        merge(left,mid+1,right,index,nums,ans);
+        return;
+    }
+    
+    vector<int> countSmaller(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> ans;
+        vector<int> index(n);
+       
+        for(int i=0;i<n;i++)
+        {
+            index[i]=i;
+            ans.push_back(0);
+        }
+        mergesort(0,n-1,index,nums,ans);
+        return ans;
+    }
+};
