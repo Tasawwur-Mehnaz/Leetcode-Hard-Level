@@ -1,0 +1,51 @@
+Given a list of unique words, return all the pairs of the distinct indices (i, j) in the given list,
+so that the concatenation of the two words words[i] + words[j] is a palindrome.
+
+Example 1:
+Input: words = ["abcd","dcba","lls","s","sssll"]
+Output: [[0,1],[1,0],[3,2],[2,4]]
+Explanation: The palindromes are ["dcbaabcd","abcddcba","slls","llssssll"]
+
+Solution:
+
+class Solution {
+public:
+    bool ispalindrome(string &s)
+    {
+        int i=0,j=s.length()-1;
+        while(i<j)
+        {
+            if(s[i++]!=s[j--])
+            return false;
+        }
+        return true;
+    }
+    vector<vector<int>> palindromePairs(vector<string>& words) {
+        vector<vector<int>> ans;
+        int n=words.size();
+        if(n<2)
+            return ans;
+        unordered_map<string,int> m;
+        for(int i=0;i<n;i++)
+        {
+            auto s=words[i];
+            reverse(s.begin(),s.end());
+            m[s]=i;
+        }
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<=words[i].size();j++)
+            {
+                string s1=words[i].substr(0,j);
+                string s2=words[i].substr(j);
+                
+                if(m.count(s1) && ispalindrome(s2) && m[s1]!=i)
+                    ans.push_back({i,m[s1]});
+                
+                if(!s1.empty() && m.count(s2) && ispalindrome(s1) && m[s2]!=i)
+                    ans.push_back({m[s2],i});
+            }
+        }
+        return ans;
+    }
+};
