@@ -1,0 +1,60 @@
+There is an undirected connected tree with n nodes labeled from 0 to n - 1 and n - 1 edges.
+You are given the integer n and the array edges where edges[i] = [ai, bi] indicates that there is an edge between nodes ai and bi in the tree.
+Return an array answer of length n where answer[i] is the sum of the distances between the ith node in the tree and all other nodes.
+
+
+Example 1:
+
+Input: n = 6, edges = [[0,1],[0,2],[2,3],[2,4],[2,5]]
+Output: [8,12,6,10,10,10]
+Explanation: The tree is shown above.
+We can see that dist(0,1) + dist(0,2) + dist(0,3) + dist(0,4) + dist(0,5)
+equals 1 + 1 + 2 + 2 + 2 = 8.
+Hence, answer[0] = 8, and so on.
+
+
+Solution:
+
+
+class Solution {
+public:
+
+    unordered_map<int,vector<int>> tree;
+    void postorder(int root, int pre, vector<int> &ans,vector<int> &count)
+    {
+        for(auto i:tree[root])
+        {
+            if(i==pre)
+              continue;
+            postorder(i,root,ans,count);
+            count[root]+=count[i];
+            ans[root]+=ans[i]+count[i];
+        }
+        count[root]++;
+    }
+
+    void preorder(int root, int pre, vector<int> &ans, vector<int> &count)
+    {
+        for(auto i:tree[root])
+        {
+            if(i==pre)
+              continue;
+            ans[i]=ans[root]-count[i]+count.size()-count[i];
+            preorder(i,root,ans,count);
+        }
+    
+    }
+    vector<int> sumOfDistancesInTree(int n, vector<vector<int>>& edges) {
+        vector<int> ans(n,0);
+        vector<int> count(n,0);
+        for(auto e:edges)
+        {
+            tree[e[1]].push_back(e[0]);
+            tree[e[0]].push_back(e[1]);        
+        }
+        postorder(0,-1,ans,count);
+        preorder(0,-1,ans,count);
+        return ans;
+    }
+
+};
