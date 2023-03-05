@@ -1,0 +1,69 @@
+Given an array of integers arr, you are initially positioned at the first index of the array.
+In one step you can jump from index i to index:
+
+i + 1 where: i + 1 < arr.length.
+i - 1 where: i - 1 >= 0.
+j where: arr[i] == arr[j] and i != j.
+Return the minimum number of steps to reach the last index of the array.
+Notice that you can not jump outside of the array at any time.
+
+ 
+Example 1:
+
+Input: arr = [100,-23,-23,404,100,23,23,23,3,404]
+Output: 3
+Explanation: You need three jumps from index 0 --> 4 --> 3 --> 9. Note that index 9 is the last index of the array.
+
+
+Solution:
+
+
+class Solution {
+public:
+    int minJumps(vector<int>& arr) {
+        int n=arr.size();
+        if(n==1)
+          return 0;
+        if(arr[0]==arr[n-1])
+          return 1;
+        vector<vector<int>> adj[n+1];
+        unordered_map<int,vector<int>> m;
+        int ans=0;
+        for(int i=0;i<n;i++)
+        {
+            m[arr[i]].push_back(i);
+        }
+        queue<int> q;
+        vector<bool> vis(n+1,false);
+        vis[0]=true;
+        q.push(0);
+        while(!q.empty())
+        {
+            int size=q.size();
+            for(int i=0;i<size;i++)
+            {    
+                int node=q.front();
+                q.pop();
+
+                if(node==n-1)
+                  return ans;
+
+                vector<int> &temp=m[arr[node]];
+                temp.push_back(node+1);
+                temp.push_back(node-1);
+                for(auto e:temp)
+                {
+                    if(e>=0 && e<n && !vis[e])
+                    {
+                        q.push(e);
+                        vis[e]=true;
+                    }
+                }
+                temp.clear();
+            }
+            ans++;
+        }
+      
+        return -1;
+    }
+};
