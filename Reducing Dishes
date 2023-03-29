@@ -1,0 +1,67 @@
+A chef has collected data on the satisfaction level of his n dishes. Chef can cook any dish in 1 unit of time.
+Like-time coefficient of a dish is defined as the time taken to cook that dish including previous dishes multiplied by its satisfaction level i.e. time[i] * satisfaction[i].
+Return the maximum sum of like-time coefficient that the chef can obtain after dishes preparation.
+Dishes can be prepared in any order and the chef can discard some dishes to get this maximum value.
+
+ 
+
+Example 1:
+
+Input: satisfaction = [-1,-8,0,5,-9]
+Output: 14
+Explanation: After Removing the second and last dish, the maximum total like-time coefficient will be equal to (-1*1 + 0*2 + 5*3 = 14).
+Each dish is prepared in one unit of time.
+
+
+Solution:
+
+DP:
+
+class Solution {
+public:
+    int process(vector<int>& sat,int ind,int t,vector<vector<int>>& dp)
+    {
+        if(ind>=sat.size())
+        return 0;
+
+        if(dp[ind][t]!=-1)
+          return dp[ind][t];
+
+        int pick=sat[ind]*t+process(sat,ind+1,t+1,dp);
+        int notpick=process(sat,ind+1,t,dp);
+
+        return dp[ind][t]=max(pick,notpick);
+    }
+    int maxSatisfaction(vector<int>& sat) {
+        int n=sat.size();
+        vector<vector<int>> dp(n+1,vector<int> (n+1,-1));
+        sort(sat.begin(),sat.end());
+        if(sat[n-1]<0)
+           return 0;
+       return process(sat,0,1,dp);
+
+    }
+};
+
+
+Another solution:  prefix sum, math
+
+
+class Solution {
+public:
+    int maxSatisfaction(vector<int>& sat) {
+        int n=sat.size();
+        sort(sat.begin(),sat.end());
+        int curr=0,cumm=0;
+        int ans=0;
+        for(int i=n-1;i>=0;i--)
+        {
+            curr+=sat[i]+cumm;
+            cumm+=sat[i];
+
+            ans=max(ans,curr);
+
+        }
+        return ans;
+    }
+};
